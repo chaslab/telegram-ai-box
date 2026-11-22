@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+# Fake `codex app-server` for relay tests: speaks just enough of the JSON-RPC protocol.
+import json, sys, threading, time
+out_lock = threading.Lock()
+waits = {}
+def send(x):
+    with out_lock:
+        sys.stdout.write(json.dumps(x, ensure_ascii=False) + "\n"); sys.stdout.flush()
+def turn(params):
+    text = " ".join(i.get("text", "") for i in params["input"] if i["type"] == "text")
+    imgs = [i["path"] for i in params["input"] if i["type"] == "localImage"]
+    th = params["threadId"]
+    send({"jsonrpc": "2.0", "method": "item/started", "params": {"threadId": th, "item": {"type": "commandExecution", "command": "ls -la"}}})
+    if "approve" in text:
+        ev = threading.Event(); waits[900] = [ev, None]
+        send({"jsonrpc": "2.0", "id": 900, "method": "item/commandExecution/requestApproval", "params": {"threadId": th, "command": "rm -rf /tmp/x"}})
+        ev.wait(60); text += " decision=" + str((waits[900][1] or {}).get("decision"))
+    time.sleep(0.5)
+    send({"jsonrpc": "2.0", "method": "item/completed", "params": {"threadId": th, "item": {"type": "agentMessage",
+          "text": f"**echo**: {text} model={params.get('model')} effort={params.get('effort')} sandbox={params['sandboxPolicy']['type']} imgs={len(imgs)}"}}})
+    send({"jsonrpc": "2.0", "method": "turn/completed", "params": {"threadId": th, "turn": {"id": "t1", "status": "completed"}}})
+n = 0
+for line in sys.stdin:
+    j = json.loads(line)
+    if "method" not in j:
+        if j.get("id") in waits:
+            waits[j["id"]][1] = j.get("result"); waits[j["id"]][0].set()
+        continue
+    m, p, i = j["method"], j.get("params") or {}, j.get("id")
+    if i is None:
+        continue
+    r = {}
+    if m == "thread/start":
+        n += 1; r = {"thread": {"id": f"th{n}"}}
+    elif m == "model/list":
+        r = {"data": [{"model": "gpt-x", "displayName": "GPT X", "isDefault": True, "defaultReasoningEffort": "high",
+                       "supportedReasoningEfforts": [{"reasoningEffort": "low"}, {"reasoningEffort": "high"}]},
+                      {"model": "gpt-y", "displayName": "GPT Y", "supportedReasoningEfforts": [{"reasoningEffort": "medium"}]}]}
+    elif m == "account/rateLimits/read":
+        r = {"rateLimits": {"primary": {"usedPercent": 20, "resetsAt": time.time() + 3700}, "secondary": {"usedPercent": 5, "resetsAt": time.time() + 86400}}}
+    elif m == "turn/start":
+        r = {"turn": {"id": "t1"}}
+        threading.Thread(target=turn, args=(p,), daemon=True).start()
+    send({"jsonrpc": "2.0", "id": i, "result": r})

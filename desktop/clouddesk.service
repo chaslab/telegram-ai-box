@@ -1,0 +1,14 @@
+[Unit]
+Description=Cloud desktop for the Telegram bot (Xvfb :99 + XFCE + Chrome)
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# XFCE needs a HOME, otherwise the panel and desktop never start
+Environment=HOME=/root USER=root
+ExecStart=/opt/clouddesk/desk.sh browser
+ExecStop=/opt/clouddesk/desk.sh stop
+
+[Install]
+WantedBy=multi-user.target

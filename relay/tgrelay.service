@@ -1,0 +1,16 @@
+[Unit]
+Description=tgbox Telegram relay (Codex / Antigravity)
+After=network-online.target clouddesk.service
+Wants=network-online.target
+
+[Service]
+Environment=HOME=/root
+Environment=PATH=/root/.local/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/opt/tgbox/tgbox.env
+WorkingDirectory=/root/tgbot
+ExecStart=/usr/bin/python3 -u /opt/tgbox/relay/tgrelay.py run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

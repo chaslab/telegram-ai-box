@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# Fake `agy` for relay tests: `agy acp` speaks the Agent Client Protocol like the gemini fake; `agy -p /usage` prints quota records.
+import json, sys, threading, time
+if sys.argv[1:3] == ["-p", "/usage"]:   # shape copied from a real agy 1.5.14 answer
+    print("starting…")
+    print(json.dumps({"conversation_id": "", "status": "SUCCESS", "num_turns": 0, "command": {"name": "usage", "data": {"groups": [
+        {"name": "Gemini Models", "buckets": [{"id": "gemini-weekly", "window": "weekly", "remaining_fraction": 0.97, "reset_time": "2099-01-02T00:00:00Z"},
+                                              {"id": "gemini-5h", "window": "5h", "remaining_fraction": 0.83, "reset_time": "2099-01-01T00:00:00Z"}]},
+        {"name": "Claude and GPT models", "buckets": [{"id": "3p-weekly", "window": "weekly", "remaining_fraction": 1, "reset_time": "2099-01-02T00:00:00Z"},
+                                                      {"id": "3p-5h", "window": "5h", "remaining_fraction": 1, "reset_time": "2099-01-01T00:00:00Z"}]}]}}}))
+    sys.exit(0)
+out_lock = threading.Lock(); waits = {}
+model = sys.argv[sys.argv.index("-m") + 1] if "-m" in sys.argv else "gemini-a"
+def send(x):
+    with out_lock:
+        sys.stdout.write(json.dumps(x, ensure_ascii=False) + "\n"); sys.stdout.flush()
+def upd(sid, u):
+    send({"jsonrpc": "2.0", "method": "session/update", "params": {"sessionId": sid, "update": u}})
+def prompt(i, p):
+    global model
+    sid = p["sessionId"]
+    text = " ".join(x.get("text", "") for x in p["prompt"] if x["type"] == "text")
+    imgs = [x for x in p["prompt"] if x["type"] == "image"]
+    upd(sid, {"sessionUpdate": "tool_call", "toolCallId": "c1", "title": "Shell ls", "kind": "execute", "status": "pending"})
+    if "approve" in text:
+        ev = threading.Event(); waits[900] = [ev, None]
+        send({"jsonrpc": "2.0", "id": 900, "method": "session/request_permission", "params": {"sessionId": sid, "toolCall": {"title": "rm -rf /tmp/x"},
+              "options": [{"optionId": "proceed_once", "name": "Allow", "kind": "allow_once"}, {"optionId": "proceed_always", "name": "Always", "kind": "allow_always"},
+                          {"optionId": "cancel", "name": "Reject", "kind": "reject_once"}]}})
+        ev.wait(60); text += " outcome=" + json.dumps((waits[900][1] or {}).get("outcome"))
+    for chunk in ("## echo: ", text, f" model={model} imgs={len(imgs)}"):
+        upd(sid, {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": chunk}}); time.sleep(0.1)
+    send({"jsonrpc": "2.0", "id": i, "result": {"stopReason": "end_turn", "usage": {"totalTokens": 1234}}})
+n = 0
+for line in sys.stdin:
+    j = json.loads(line)
+    if "method" not in j:
+        if j.get("id") in waits:
+            waits[j["id"]][1] = j.get("result"); waits[j["id"]][0].set()
+        continue
+    m, p, i = j["method"], j.get("params") or {}, j.get("id")
+    if i is None:
+        continue
+    if m == "session/prompt":
+        threading.Thread(target=prompt, args=(i, p), daemon=True).start(); continue
+    r = {}
+    if m == "initialize":
+        r = {"protocolVersion": 1, "agentCapabilities": {"loadSession": True}}
+    elif m == "session/new":
+        n += 1
+        r = {"sessionId": f"s{n}", "configOptions": [{"id": "thinking_effort", "name": "Effort", "currentValue": "high",
+             "options": [{"value": v, "name": v} for v in ("low", "medium", "high", "xhigh", "max")]}], "models": {"availableModels": [{"modelId": "gemini-a", "name": "Gemini A"}, {"modelId": "gemini-b", "name": "Gemini B"}], "currentModelId": model}}
+    elif m == "session/set_model":
+        model = p["modelId"]
+    elif m == "session/set_config_option":
+        model = model.split("/")[0] + "/" + p["value"]
+    send({"jsonrpc": "2.0", "id": i, "result": r})

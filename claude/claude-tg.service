@@ -1,0 +1,14 @@
+[Unit]
+Description=Claude Code Telegram bot (tmux session claude-tg)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=HOME=/root
+ExecStart=/opt/tgbox/claude/ensure-tmux.sh
+ExecStop=/usr/bin/tmux kill-session -t claude-tg
+
+[Install]
+WantedBy=multi-user.target

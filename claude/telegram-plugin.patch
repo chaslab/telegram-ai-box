@@ -1,0 +1,51 @@
+--- a/server.ts	2026-11-22 13:43:18.437748812 +0800
++++ b/server.ts	2026-11-22 14:12:33.294458179 +0800
+@@ -700,7 +700,10 @@
+ })
+ 
+ bot.command('help', async ctx => {
+-  if (!dmCommandGate(ctx)) return
++  const gh = dmCommandGate(ctx)
++  if (!gh) return
++  // [local patch 2026-11-22] paired owner: /help goes to Claude (botkit SPEC fixed-format reply)
++  if (gh.access.allowFrom.includes(gh.senderId)) { await handleInbound(ctx, ctx.message?.text ?? '/help', undefined); return }
+   await ctx.reply(
+     `Messages you send here route to a paired Claude Code session. ` +
+     `Text and photos are forwarded; replies and reactions come back.\n\n` +
+@@ -715,8 +718,8 @@
+   const { access, senderId } = gated
+ 
+   if (access.allowFrom.includes(senderId)) {
+-    const name = ctx.from!.username ? `@${ctx.from!.username}` : senderId
+-    await ctx.reply(`Paired as ${name}.`)
++    // [local patch 2026-11-22] paired owner: /status goes to Claude (botkit SPEC fixed-format reply)
++    await handleInbound(ctx, ctx.message?.text ?? '/status', undefined)
+     return
+   }
+ 
+@@ -737,6 +740,25 @@
+ // Security mirrors the text-reply path: allowFrom must contain the sender.
+ bot.on('callback_query:data', async ctx => {
+   const data = ctx.callbackQuery.data
++  // [local patch 2026-11-22] Inline choice buttons: callback_data "say:<text>" is delivered to Claude
++  // exactly as if the user had typed <text>; the message is edited to show the pick and drop the buttons.
++  const say = /^say:([\s\S]{1,60})$/.exec(data)
++  if (say) {
++    if (!loadAccess().allowFrom.includes(String(ctx.from.id))) {
++      await ctx.answerCallbackQuery({ text: 'Not authorized.' }).catch(() => {})
++      return
++    }
++    const choice = say[1]!
++    await ctx.answerCallbackQuery({ text: `已选择：${choice}` }).catch(() => {})
++    const cm = ctx.callbackQuery.message
++    if (cm && 'text' in cm && cm.text) {
++      await ctx.editMessageText(`${cm.text}\n\n✅ 已选择：${choice}`).catch(() => {})
++    } else {
++      await ctx.editMessageReplyMarkup({ reply_markup: undefined }).catch(() => {})
++    }
++    await handleInbound(ctx, choice, undefined)
++    return
++  }
+   const m = /^perm:(allow|deny|more):([a-km-z]{5})$/.exec(data)
+   if (!m) {
+     await ctx.answerCallbackQuery().catch(() => {})
