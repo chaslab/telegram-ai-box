@@ -6,7 +6,7 @@
 
 作者：Chas（X：[@HiTszHei](https://x.com/HiTszHei)）
 
-欢迎自己用、随便改、分享给朋友，分享时带上本仓库链接就好；想拿去做收费服务或产品，先跟我打个招呼。用着有 bug 或有改进想法，欢迎在 [Issues](https://github.com/chaslab/telegram-ai-box/issues) 留言，我会看。
+用着有 bug 或有改进想法，欢迎在 [Issues](https://github.com/chaslab/telegram-ai-box/issues) 留言。
 
 把 AI 接到 Telegram 上不难，难的是用起来顺手。这个仓库是我们打磨了很久的一套 Telegram 组件，装上以后，在手机上用你的 AI，跟坐在电脑前用差不多：
 

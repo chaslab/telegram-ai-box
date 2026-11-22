@@ -6,7 +6,7 @@ Your own cloud server + Telegram + the AI subscription you already pay for (Clau
 
 Author: Chas (X: [@HiTszHei](https://x.com/HiTszHei))
 
-Use it, change it, share it with friends; just include a link to this repo when you share. If you want to build a paid service or product on it, please check with me first. Found a bug or have an idea? Open an [issue](https://github.com/chaslab/telegram-ai-box/issues) — I read them.
+Found a bug or have an idea for improvement? Feel free to open an [issue](https://github.com/chaslab/telegram-ai-box/issues).
 
 Hooking an AI up to Telegram is easy; making it pleasant to use is the hard part. This repo is a set of Telegram components we polished for a long time. Once installed, using your AI from your phone feels close to sitting at your computer:
 
