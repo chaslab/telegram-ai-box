@@ -1,6 +1,6 @@
 # Telegram AI 助手组件包
 
-[English summary below](#english)
+**中文** | [English](README.en.md)
 
 一台自己的云服务器 + Telegram + 你自己的 AI 订阅（Claude、ChatGPT 的 Codex，或 Google 的 Antigravity），在手机上得到类似 Grokbot 的体验：发条消息，服务器就去干活；24 小时在线，额度透明，模型自己选。
 
@@ -21,6 +21,7 @@
 | /remind、/jobs | 快捷提醒、定时任务列表 |
 | /memory | 它记住了你哪些事 |
 | 云电脑 | 服务器上一个带 Chrome 的虚拟桌面，AI 用它上网办事 |
+| 工具箱 | 读写 PDF / Word / Excel / PPT、扫描件识字、画图表，装好就能用 |
 | /desk 接管 | 碰到登录、验证码、付款，AI 把页面打开好，发一张卡片，你在 Telegram 里点开全屏桌面亲手操作 |
 | /screen | 随时看一眼云电脑在干嘛 |
 | 小习惯 | 收到消息先回 👀；慢活先发"⏳ 正在…"，做完删掉 |
@@ -68,20 +69,8 @@ Codex 和 Antigravity 官方都没有 Telegram 接入，[relay/](relay/) 是这�
 - 机器人有这台服务器的最高权限，能执行命令。只给你自己用，不要拉进群。
 - 不要在 Telegram 里发密码、银行卡、验证码。需要登录时用 /desk 自己点。
 - 用 AI 订阅要遵守服务商的条款，服务器放在服务商支持的地区。
-- Claude 版的补丁改的是官方 Telegram 插件，插件更新后要重新打（让你的 AI 照部署手册 4A 节做）。
+- Claude 版的补丁改的是官方 Telegram 插件，插件更新后要重新打（让你的 AI 照部署手册 4.4 节做）。
 - 少数网站的人机验证（Cloudflare 设得严的）在云服务器的浏览器里可能过不去，这类网站在手机上操作。
-
----
-
-## English
-
-A component kit that makes an AI agent in Telegram feel like using it at your desk: a fixed command menu, inline buttons to switch model and thinking effort, a usage readout with progress bars, reminders and scheduled tasks, a cloud desktop with Chrome that the AI uses, and a takeover card that opens that desktop full-screen inside Telegram so you can handle logins and captchas yourself.
-
-It works with Claude Code (official Telegram plugin + patch), and with Codex and Google Antigravity CLI through our own relay in [relay/](relay/) (Codex app-server / ACP; neither has an official Telegram integration). The relay is ours, not official: if a CLI update breaks it, hand the error log to your AI and let it fix `relay/tgrelay.py`. For other agents, have your AI follow the two backend classes in the relay and [docs/SPEC.en.md](docs/SPEC.en.md).
-
-To install, give your own AI agent SSH access to a fresh Ubuntu 24.04 server and ask it to follow [INSTALL-FOR-AI.md](INSTALL-FOR-AI.md). It installs all three (Claude, Codex, Antigravity), asks which subscription you have, and stops when you need to act yourself (logging in, creating the bot with @BotFather, pairing).
-
-Author: Chas (X: [@HiTszHei](https://x.com/HiTszHei)).
 
 ## 许可 / License
 [PolyForm Noncommercial 1.0.0](LICENSE)：个人和非商业用途免费使用、修改、分享，请保留作者和本仓库链接；商业用途请先联系作者。Claude 插件补丁部分见 [NOTICE](NOTICE)。
