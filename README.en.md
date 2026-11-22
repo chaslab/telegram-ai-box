@@ -38,7 +38,7 @@ The bot's replies and menus are in Chinese by default; it follows your language 
 1. Get a server outside mainland China (Ubuntu 24.04, about 4 GB RAM; choose a region your AI service supports, such as the US, Japan or Singapore).
 2. Send this sentence to the AI assistant on your own computer (Claude Code, Codex or Antigravity), and give it SSH access to the server:
    > Please deploy this server by following https://github.com/chaslab/telegram-ai-box/blob/main/INSTALL-FOR-AI.md.
-3. It installs all three (Claude, Codex, Antigravity), asks which subscription you have, and needs you in only three places: open the link it sends on your phone and sign in (send back the authorization code if the page shows one), create a bot with @BotFather and send it the token, and message your bot once and tell it the pairing code. To switch to another AI later, sign in to that one and change one setting.
+3. It installs all three (Claude, Codex, Antigravity), asks which subscription you have, and needs you in only three places: open the link it sends on your phone and sign in (send back the authorization code if the page shows one), create a bot with [@BotFather](https://t.me/BotFather) and send it the token, and message your bot once and tell it the pairing code. To switch to another AI later, sign in to that one and change one setting.
 
 Prefer to do it by hand? Copy the commands from [INSTALL-FOR-AI.md](INSTALL-FOR-AI.md) block by block; it's just slower. (The runbook is in Chinese; your AI reads it fine either way.)
 

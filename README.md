@@ -38,7 +38,7 @@
 1. 买一台海外服务器（Ubuntu 24.04，4G 内存左右；地区选你的 AI 服务支持的地方，比如美国、日本、新加坡）。
 2. 把这句话发给你自己电脑上的 AI 助手（Claude Code、Codex、Antigravity 都行），再把服务器的 SSH 登录方式给它：
    > 请按 https://github.com/chaslab/telegram-ai-box/blob/main/INSTALL-FOR-AI.md 帮我把这台服务器部署好。
-3. 它会把三家（Claude、Codex、Antigravity）的程序都装好，问你有哪家的订阅，然后只在三个地方需要你：在手机上打开它发的网址登录你的账号（有授权码就发回给它）、在 @BotFather 建机器人把 token 发给它、给机器人发一句话把配对码告诉它。以后想换一家，登录另一家、改一个设置就行。
+3. 它会把三家（Claude、Codex、Antigravity）的程序都装好，问你有哪家的订阅，然后只在三个地方需要你：在手机上打开它发的网址登录你的账号（有授权码就发回给它）、在 [@BotFather](https://t.me/BotFather) 建机器人把 token 发给它、给机器人发一句话把配对码告诉它。以后想换一家，登录另一家、改一个设置就行。
 
 不想交给 AI，也可以自己照着 [INSTALL-FOR-AI.md](INSTALL-FOR-AI.md) 一段段复制命令做，只是慢一些。
 
