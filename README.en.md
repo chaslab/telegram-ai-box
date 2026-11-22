@@ -8,7 +8,7 @@ Author: Chas (X: [@HiTszHei](https://x.com/HiTszHei))
 
 Found a bug or have an idea for improvement? Feel free to open an [issue](https://github.com/chaslab/telegram-ai-box/issues).
 
-Hooking an AI up to Telegram is easy; making it pleasant to use is the hard part. This repo is a set of Telegram components we polished for a long time. Once installed, using your AI from your phone feels close to sitting at your computer:
+Hooking an AI up to Telegram is easy; making it pleasant to use is the hard part. This repo is a set of Telegram components built around the way people use Grokbot every day. Once installed, using your own AI from your phone feels much like Grokbot, except that your quota is visible, you pick the model, the server is online 24/7, and most things are a tap on a button in Telegram:
 
 | Component | What it looks like in Telegram |
 |---|---|

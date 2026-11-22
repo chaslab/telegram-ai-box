@@ -8,7 +8,7 @@
 
 用着有 bug 或有改进想法，欢迎在 [Issues](https://github.com/chaslab/telegram-ai-box/issues) 留言。
 
-把 AI 接到 Telegram 上不难，难的是用起来顺手。这个仓库是我们打磨了很久的一套 Telegram 组件，装上以后，在手机上用你的 AI，跟坐在电脑前用差不多：
+把 AI 接到 Telegram 上不难，难的是用起来顺手。这个仓库照着 Grokbot 的高频用法，打磨了一套 Telegram 组件。装上以后，在手机上用你自己的 AI，体验跟 Grokbot 差不多，而且额度透明、模型自己选，服务器 24 小时在线，在 Telegram 里点点按钮就能操作：
 
 <!-- 截图：菜单 / 选模型按钮 / 查额度 / 接管云电脑 -->
 
